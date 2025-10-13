@@ -16,4 +16,4 @@ metadata:
   name: simple-crud-app-config
   namespace: simple-crud-app
 data:
-  DB_URI: "mongodb://localhost:27017"
+  DB_URI: "localhost:27017"

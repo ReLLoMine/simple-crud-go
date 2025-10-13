@@ -172,7 +172,7 @@ func mainHandler(rw http.ResponseWriter, req *http.Request) {
 
 	path := req.RequestURI
 	body, err := readBody(req)
-	log.Printf("Action %s to %s with: %s, err: %v", req.Method, path, body, err)
+	log.Printf("Action %s to %s with: %s, err: %v from %s", req.Method, path, body, err, req.RemoteAddr)
 
 	if err != nil {
 		response.body, response.code = makeResponse("Error reading JSON body", http.StatusBadRequest)

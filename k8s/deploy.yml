@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: simple-crud-app-deploy
+  name: simple-crud-app
   namespace: simple-crud-app
   labels:
     app: simple-crud-app

@@ -24,7 +24,7 @@ spec:
         name: build-and-deploy
       params:
       - name: deployment-name
-        value: simple-crud-app-deploy
+        value: simple-crud-app
       - name: git-url
         value: $(tt.params.git-repo-url)
       - name: git-revision

@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: simple-crud-app-pvc
+  namespace: simple-crud-app
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: simple-crud-app-config
+  namespace: simple-crud-app
+data:
+  DB_URI: "mongodb://localhost:27017"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: simple-crud-app-secret
+  namespace: simple-crud-app
+type: Opaque
+stringData:
+  DB_USERNAME: "admin"
+  DB_PASSWORD: 3WeReqCpv4a2AU0H

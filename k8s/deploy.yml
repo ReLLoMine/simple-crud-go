@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simple-crud-app-deploy
+  namespace: simple-crud-app
+  labels:
+    app: simple-crud-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: simple-crud-app
+  template:
+    metadata:
+      labels:
+        app: simple-crud-app
+    spec:
+      containers:
+        - name: simple-crud-app
+          image: simple-crud-app
+          env:
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: simple-crud-app-secret
+                  key: DB_USERNAME
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: simple-crud-app-secret
+                  key: DB_PASSWORD
+            - name: DB_URI
+              valueFrom:
+                configMapRef:
+                  name: simple-crud-app-config
+                  key: DB_URI
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+        - name: mongo
+          image: docker.io/library/mongo:latest
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: simple-crud-app-secret
+                  key: DB_USERNAME
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: simple-crud-app-secret
+                  key: DB_PASSWORD
+          volumeMounts:
+            - name: simple-crud-app-volume
+              mountPath: /data/db
+      volumes:
+        - name: simple-crud-app-volume
+          persistentVolumeClaim:
+            claimName: simple-crud-app-pvc

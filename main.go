@@ -35,6 +35,7 @@ func newResponse() *Response {
 type Environment struct {
 	dbURI        string
 	dbName       string
+	dbConnScheme string
 	dbCollection string
 	dbUsername   string
 	dbPassword   string
@@ -43,7 +44,8 @@ type Environment struct {
 }
 
 var env Environment = Environment{
-	dbURI:        getEnv("DB_URI", "mongodb://127.0.0.1:27017"),
+	dbURI:        getEnv("DB_URI", "127.0.0.1:27017"),
+	dbConnScheme: getEnv("DB_CONN_SCHEME", "mongodb"),
 	dbName:       getEnv("DB_NAME", "simple_crud"),
 	dbCollection: getEnv("DB_COLLECTION", "simple_crud"),
 	dbUsername:   getEnv("DB_USERNAME", "admin"),
@@ -203,7 +205,9 @@ func mainHandler(rw http.ResponseWriter, req *http.Request) {
 func init() {
 	// Init DB connection
 	var err error
-	client, err = mongo.Connect(options.Client().ApplyURI(env.dbURI))
+	connString := fmt.Sprintf("%s://%s:%s@%s/", env.dbConnScheme, env.dbUsername, env.dbPassword, env.dbURI)
+	log.Print("Connecting at: ", connString)
+	client, err = mongo.Connect(options.Client().ApplyURI(connString))
 	if err != nil {
 		log.Fatal(err.Error())
 	}

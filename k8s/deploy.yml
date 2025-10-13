@@ -31,7 +31,7 @@ spec:
                   key: DB_PASSWORD
             - name: DB_URI
               valueFrom:
-                configMapRef:
+                configMapKeyRef:
                   name: simple-crud-app-config
                   key: DB_URI
           ports:

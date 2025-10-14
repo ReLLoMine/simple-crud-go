@@ -5,6 +5,7 @@ metadata:
   namespace: simple-crud-app
   labels:
     app: simple-crud-app
+    app.kubernetes.io/part-of: "SimpleCRUDApp"
 spec:
   strategy:
     type: Recreate
@@ -16,6 +17,7 @@ spec:
     metadata:
       labels:
         app: simple-crud-app
+        app.kubernetes.io/part-of: "SimpleCRUDApp"
     spec:
       containers:
         - name: simple-crud-app

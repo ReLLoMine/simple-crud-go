@@ -5,6 +5,7 @@ metadata:
   namespace: simple-crud-app
   labels:
     app: simple-crud-app
+    app.kubernetes.io/part-of: "SimpleCRUDApp"
 spec:
   selector:
     app: simple-crud-app
@@ -20,6 +21,9 @@ kind: Route
 metadata:
   name: simple-crud-app-route
   namespace: simple-crud-app
+  labels:
+    app: simple-crud-app
+    app.kubernetes.io/part-of: "SimpleCRUDApp"
   annotations:
     cert-manager.io/issuer-name: letsencrypt-http
     cert-manager.io/issuer-kind: ClusterIssuer

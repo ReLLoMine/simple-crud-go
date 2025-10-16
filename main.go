@@ -117,7 +117,7 @@ func getItem(path string) (map[string]any, int) {
 	}
 }
 
-func createOrOverwriteItem(path string, data map[string]any) (map[string]any, int) {
+func putItem(path string, data map[string]any) (map[string]any, int) {
 	ctx, cancel := context.WithTimeout(mainContext, time.Second*2)
 	defer cancel()
 
@@ -136,20 +136,12 @@ func createOrOverwriteItem(path string, data map[string]any) (map[string]any, in
 	return makeResponse("Ok", http.StatusOK)
 }
 
-func createOrUpdateItem(path string, data map[string]any) (map[string]any, int) {
+func updateItem(path string, data map[string]any) (map[string]any, int) {
 	ctx, cancel := context.WithTimeout(mainContext, time.Second*2)
 	defer cancel()
 
-	data["path"] = path
-
-	if getSR(path) == nil {
-		if _, err := collection.InsertOne(ctx, data); err != nil {
-			log.Panic(err.Error())
-		}
-	} else {
-		if _, err := collection.UpdateOne(ctx, bson.D{{Key: "path", Value: path}}, data); err != nil {
-			return makeResponse(err.Error(), http.StatusBadRequest)
-		}
+	if _, err := collection.UpdateOne(ctx, bson.D{{Key: "path", Value: path}}, data); err != nil {
+		return makeResponse(err.Error(), http.StatusBadRequest)
 	}
 
 	return makeResponse("Ok", http.StatusOK)
@@ -182,10 +174,10 @@ func mainHandler(rw http.ResponseWriter, req *http.Request) {
 
 		case http.MethodGet:
 			response.body, response.code = getItem(path)
-		case http.MethodPost:
-			response.body, response.code = createOrUpdateItem(path, body)
+		case http.MethodPatch:
+			response.body, response.code = updateItem(path, body)
 		case http.MethodPut:
-			response.body, response.code = createOrOverwriteItem(path, body)
+			response.body, response.code = putItem(path, body)
 		case http.MethodDelete:
 			response.body, response.code = deleteItem(path)
 		default:
@@ -206,6 +198,7 @@ func init() {
 	// Init DB connection
 	var err error
 	connString := fmt.Sprintf("%s://%s:%s@%s/", env.dbConnScheme, env.dbUsername, env.dbPassword, env.dbURI)
+	// connString := fmt.Sprintf("%s://%s/", env.dbConnScheme, env.dbURI)
 	log.Print("Connecting at: ", connString)
 	client, err = mongo.Connect(options.Client().ApplyURI(connString))
 	if err != nil {
